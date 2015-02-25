@@ -28,6 +28,17 @@ is($converter.convert('<VirtualHost *:80>
 }
 ');
 is($converter.convert('<VirtualHost *:80>
+    DocumentRoot /srv/www/htdocs/void.atikon.at
+    ServerName void.atikon.at
+    RewriteRule ^/foo/bar$ /content/foo/bar [R=301,L]
+</VirtualHost>'), 'server {
+        server_name void.atikon.at;
+        location = /foo/bar {
+                return /content/foo/bar;
+        }
+}
+');
+is($converter.convert('<VirtualHost *:80>
 	ServerName www.haubner-stb.de
 	ServerAlias haubner-stb.de
 	DocumentRoot /srv/www/htdocs/kunden/haubner-stb.de
@@ -88,57 +99,37 @@ server {
         server_name www.haubner-stb.de;
         error_page 404 /404.html;
         location = /news {
-                    return /news.html;
+                return /news.html;
         }
-
         location = /facebook {
-                    return https://www.facebook.com/pages/Haubner-Schäfer-Partner/190673467622036;
+                return https://www.facebook.com/pages/Haubner-Schäfer-Partner/190673467622036;
         }
-
         location = /twitter {
-                    return https://twitter.com/haubner_stb;
+                return https://twitter.com/haubner_stb;
         }
-
         location = /impressum {
-                    return /content/inhalte/kanzlei/impressum/index_ger.html;
+                return /content/inhalte/kanzlei/impressum/index_ger.html;
         }
-
         location = /net {
-                    return /content/inhalte/kanzlei/kanzlei_im_netz/index_ger.html;
+                return /content/inhalte/kanzlei/kanzlei_im_netz/index_ger.html;
         }
-
         location = / {
-                    return /content/inhalte/kanzlei/kanzlei_app/index_ger.html;
+                return /content/inhalte/kanzlei/kanzlei_app/index_ger.html;
         }
-
         location  /facebook {
-            
         }
-
         location  /news {
-            
         }
-
         location  /twitter {
-            
         }
-
         location  /impressum {
-            
         }
-
         location  /net {
-            
         }
-
         location  /app {
-            
         }
-
         location  /App {
-            
         }
-
         #ProxyPassMatch ^/(?!error|icons|cgi-bin|htdig|statistik$|news$|facebook$|twitter$|impressum$|net$|(a|A)pp$|(a|A)pp$|sys_static|(a|A)pp$) http://0:8084/ connectiontimeout=20 timeout=900 retry=0 disablereuse=On
         #RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
         #RewriteRule ^(.*)/index_ger\.html(.*) $1/app_ger.html$2 [R,NE,L]

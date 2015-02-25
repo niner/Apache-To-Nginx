@@ -133,6 +133,14 @@ class Expression {
     has Bool $.end_anchored = False;
     has RegexAtom @.atoms;
 
+    method is_exact_string_match() {
+        return
+            self.begin_anchored
+            and self.end_anchored
+            and self.atoms.elems == 1
+            and self.atoms[0] ~~ RegexLiteral;
+    }
+
     method Str() {
         return ($.begin_anchored ?? '^' !! '') ~ @.atoms».Str.join('') ~ ($.end_anchored ?? '$' !! '');
     }

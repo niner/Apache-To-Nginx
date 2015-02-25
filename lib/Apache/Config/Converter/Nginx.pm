@@ -107,6 +107,27 @@ multi method convert_directive(
     );
 }
 
+#RewriteRule ^/archiv/newsarchiv.html$ /steuerberater/news/index.html [R=301,L]
+
+subset RewriteRedirect of Apache::Config::RewriteRule
+    where {
+        $_.regex.is_exact_string_match
+        and $_.options ~~ /<wb>R\=/
+    };
+
+multi method convert_directive(
+    @directives where @directives[0] ~~ RewriteRedirect
+) {
+    my $redirect = @directives.shift;
+    return Nginx::Config::Location.new(
+        op         => '=',
+        path       => $redirect.regex.atoms[0].Str,
+        directives => Nginx::Config::Return.new(
+            value => $redirect.replacement,
+        ),
+    );
+}
+
 subset ObsoleteDirective of Apache::Config::UnknownDirective
     where {
         $_.name ~~ /XSendFile/

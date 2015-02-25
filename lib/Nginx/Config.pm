@@ -55,11 +55,10 @@ class Location {
     has @.directives;
 
     method Str {
-        return qq:heredoc/CONFIG/;
-            location $.op $.path \{
-                { @.directives».Str.join("\n").indent(8) }
-            \}
-            CONFIG
+        return
+            "location $.op $.path \{\n"
+            ~ (@.directives ?? @.directives».Str.join("\n").indent(8) ~ "\n" !! '')
+            ~ '}';
     }
 }
 
