@@ -72,7 +72,7 @@ class ProxyPass is Directive {
     has $.options = '';
 
     method Str() {
-        return 'ProxyPass ' ~ $.path.Str ~ ' ' ~ $.uri.Str ~ ' ' ~ $.options.Str;
+        return 'ProxyPass ' ~ $.path.Str ~ ' ' ~ $.uri.Str ~ ' ' ~ ($.options // '').Str;
     }
 }
 

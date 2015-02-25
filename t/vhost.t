@@ -41,6 +41,17 @@ is($converter.convert('<VirtualHost *:80>
 is($converter.convert('<VirtualHost *:80>
     DocumentRoot /srv/www/htdocs/void.atikon.at
     ServerName void.atikon.at
+    RewriteRule ^/global/site/leist_steuerberatung.html /content/steuerberater_wirtschaftspruefer/leistungen/steuerberater_rosenheim/index.html [R=301,L]
+</VirtualHost>'), 'server {
+        server_name void.atikon.at;
+        location ~ ^/global/site/leist_steuerberatung.html {
+                return /content/steuerberater_wirtschaftspruefer/leistungen/steuerberater_rosenheim/index.html;
+        }
+}
+');
+is($converter.convert('<VirtualHost *:80>
+    DocumentRoot /srv/www/htdocs/void.atikon.at
+    ServerName void.atikon.at
     ProxyPassMatch ^/(?!error|icons|cgi-bin|htdig|statistik$|news$|sys_static) http://0:8084/ connectiontimeout=20 timeout=900 retry=0 disablereuse=On
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
