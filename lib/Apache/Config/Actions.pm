@@ -22,7 +22,6 @@ method virtual_host($/) {
         aliases => [ get_directives($<directive>, 'server_alias').list ],
         directives => $<directive>».ast.grep({ $_ ~~ Apache::Config::Directive }),
     );
-    $/.ast does CMS if $/.ast.is_cms;
 }
 
 method directive($/) {

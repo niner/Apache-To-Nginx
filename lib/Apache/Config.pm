@@ -95,9 +95,6 @@ class UnknownDirective is Directive {
     }
 }
 
-role CMS is export {
-}
-
 class VirtualHost {
     has $.name;
     has @.aliases;
@@ -141,4 +138,4 @@ class Expression {
     }
 }
 
-# vim: ft=perl
+# vim: ft=perl6
