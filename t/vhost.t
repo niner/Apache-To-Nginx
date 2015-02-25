@@ -39,6 +39,34 @@ is($converter.convert('<VirtualHost *:80>
 }
 ');
 is($converter.convert('<VirtualHost *:80>
+    DocumentRoot /srv/www/htdocs/void.atikon.at
+    ServerName void.atikon.at
+    ProxyPassMatch ^/(?!error|icons|cgi-bin|htdig|statistik$|news$|sys_static) http://0:8084/ connectiontimeout=20 timeout=900 retry=0 disablereuse=On
+</VirtualHost>'), 'server {
+        server_name void.atikon.at;
+        include stanzas/cms.conf;
+        location ~ ^/(news$) {
+        }
+}
+');
+is($converter.convert('<VirtualHost *:80>
+	ServerName void.atikon.at
+        ServerAlias nix.atikon.at www.void.atikon.at
+
+	RewriteCond %{HTTP_HOST} !void.atikon.at$
+	RewriteRule ^(.*)$ http://void.atikon.at$1 [R=301,L]
+</VirtualHost>
+'), 'server {
+        server_name nix.atikon.at, www.void.atikon.at;
+        include stanzas/domain_redirect.conf;
+}
+server {
+        server_name void.atikon.at;
+
+}
+');
+
+is($converter.convert('<VirtualHost *:80>
 	ServerName www.haubner-stb.de
 	ServerAlias haubner-stb.de
 	DocumentRoot /srv/www/htdocs/kunden/haubner-stb.de
@@ -113,7 +141,7 @@ server {
         location = /net {
                 return /content/inhalte/kanzlei/kanzlei_im_netz/index_ger.html;
         }
-        location = / {
+        location ~ /(a|A)pp$ {
                 return /content/inhalte/kanzlei/kanzlei_app/index_ger.html;
         }
         location  /facebook {
@@ -130,7 +158,9 @@ server {
         }
         location  /App {
         }
-        #ProxyPassMatch ^/(?!error|icons|cgi-bin|htdig|statistik$|news$|facebook$|twitter$|impressum$|net$|(a|A)pp$|(a|A)pp$|sys_static|(a|A)pp$) http://0:8084/ connectiontimeout=20 timeout=900 retry=0 disablereuse=On
+        include stanzas/cms.conf;
+        location ~ ^/(news$|facebook$|twitter$|impressum$|net$|(a|A)pp$|(a|A)pp$|(a|A)pp$) {
+        }
         #RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
         #RewriteRule ^(.*)/index_ger\.html(.*) $1/app_ger.html$2 [R,NE,L]
         include stanzas/mobile_redirect.conf;

@@ -112,7 +112,6 @@ token regex {
     # ^/(?!error|icons|cgi-bin|htdig|statistik\$|news\$|facebook\$|twitter\$|impressum\$|net\$|(a|A)pp\$|(a|A)pp\$|sys_static|(a|A)pp\$)
     <begin_anchor>?
     <regex_atom>*
-    <end_anchor>?
 }
 token begin_anchor {
     '^'
@@ -124,6 +123,7 @@ token regex_atom {
     <regex_alternation>
     | <regex_group>
     | <regex_literal>
+    | <end_anchor>
 }
 token regex_group {
     '('
@@ -134,16 +134,20 @@ token regex_group {
 token regex_alternative {
     <regex_group>
     | <regex_literal>
+    | <end_anchor>
+}
+token regex_alternatives {
+    <regex_alternative>+
 }
 token regex_alternation {
-    <regex_alternative> 
+    <regex_alternatives>
     [
         '|'
-        <regex_alternative>
+        <regex_alternatives>
     ]+
 }
 token regex_literal {
-    [ <-[ \s \( \) \| \$ ]> | \\ \s ]+
+    [ <-[ \s \( \) \| \$ ]> | '\$' | \\ \s ]+
 }
 
 # vim: ft=perl6

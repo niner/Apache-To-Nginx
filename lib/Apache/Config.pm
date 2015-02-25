@@ -2,6 +2,10 @@ class Apache::Config;
 
 has $.virtual_hosts;
 
+method Str() {
+    return $.virtual_hosts».Str.join("\n");
+}
+
 class Domain {
     has $.name;
 }
@@ -106,6 +110,10 @@ class VirtualHost {
 
     method redirects_to_canonical_domain {
     }
+
+    method Str() {
+        return "<VirtualHost *:80>\n" ~ $.directives».Str.join("\n").indent(8) ~ "\n</VirtualHost>";
+    }
 }
 
 class RegexAtom {
@@ -117,9 +125,9 @@ class RegexGroup is RegexAtom {
     }
 }
 class RegexAlternation is RegexAtom {
-    has RegexAtom @.alternatives;
+    has @.alternatives;
     method Str() {
-        return @.alternatives».Str.join('|');
+        return @.alternatives.map(*».Str.join(''))».Str.join('|');
     }
 }
 class RegexLiteral is RegexAtom {
@@ -128,21 +136,24 @@ class RegexLiteral is RegexAtom {
         return $.content;
     }
 }
+class RegexEndAnchor is RegexAtom {
+    method Str() {
+        return '$';
+    }
+}
 class Expression {
     has Bool $.begin_anchored = False;
-    has Bool $.end_anchored = False;
     has RegexAtom @.atoms;
 
     method is_exact_string_match() {
         return
-            self.begin_anchored
-            and self.end_anchored
-            and self.atoms.elems == 1
-            and self.atoms[0] ~~ RegexLiteral;
+            self.atoms.elems == 2
+            and self.atoms[0] ~~ RegexLiteral
+            and self.atoms[1] ~~ RegexEndAnchor;
     }
 
     method Str() {
-        return ($.begin_anchored ?? '^' !! '') ~ @.atoms».Str.join('') ~ ($.end_anchored ?? '$' !! '');
+        return ($.begin_anchored ?? '^' !! '') ~ @.atoms».Str.join('');
     }
 }
 

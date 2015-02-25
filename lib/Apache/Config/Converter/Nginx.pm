@@ -64,11 +64,13 @@ multi method convert_directive(
 ) {
     my $directive = @directives.shift;
     my $alternatives = $directive.regex.atoms[1].atoms[0].alternatives;
-    for <error icons cgi-bin htdig statistik statistik$ statistik\$ sys_static> -> $obsolete {
+    for <error icons cgi-bin htdig statistik statistik$ statistik\$ sys_static>, 'statistik $' -> $obsolete {
         my $i = $alternatives.first-index({$_.Str eq $obsolete});
         $alternatives.splice($i, 1) if defined $i;
     }
-    return Nginx::Config::Location.new(op => '~', path => $directive.regex.Str);
+    return
+        Nginx::Config::CMS.new,
+        Nginx::Config::Location.new(op => '~', path => $directive.regex.Str);
 }
 
 subset CMSProxyStatic of Apache::Config::ProxyPassMatch
@@ -99,8 +101,10 @@ multi method convert_directive(
     my $redirect = @directives.shift;
     return if $redirect.regex.atoms[0].Str eq '/statistik'; # already handled by include
     return Nginx::Config::Location.new(
-        op         => $redirect.regex.end_anchored ?? '=' !! '~',
-        path       => $redirect.regex.end_anchored ?? $redirect.regex.atoms[0].Str !! $_.regex.Str,
+        op         => $redirect.regex.is_exact_string_match ?? '=' !! '~',
+        path       => $redirect.regex.is_exact_string_match
+            ?? $redirect.regex.atoms[0].Str
+            !! $redirect.regex.Str,
         directives => Nginx::Config::Return.new(
             value => $redirect.uri,
         ),

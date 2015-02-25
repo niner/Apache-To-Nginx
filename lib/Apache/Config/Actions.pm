@@ -116,7 +116,6 @@ method regex($/) {
     make Apache::Config::Expression.new(
         begin_anchored => $<begin_anchor> ?? True !! False,
         atoms => $<regex_atom>».ast.grep(Apache::Config::RegexAtom),
-        end_anchored => $<end_anchor> ?? True !! False,
     );
 }
 
@@ -140,10 +139,18 @@ method regex_alternative($/) {
     make $/.hash.values[0].ast;
 }
 
+method regex_alternatives($/) {
+    make [ $/.hash.values[0]».ast ];
+}
+
 method regex_alternation($/) {
     make Apache::Config::RegexAlternation.new(
-        alternatives => $<regex_alternative>».ast,
+        alternatives => $<regex_alternatives>».ast,
     );
+}
+
+method end_anchor($/) {
+    make Apache::Config::RegexEndAnchor.new;
 }
 
 # vim: ft=perl6
