@@ -9,6 +9,21 @@ is($converter.convert('<VirtualHost *:80>
     ServerName void.atikon.at
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
+
+}
+');
+is($converter.convert('<VirtualHost *:80>
+    DocumentRoot /srv/www/htdocs/void.atikon.at
+    ServerName void.atikon.at
+
+    RewriteCond %{HTTP_USER_AGENT} ip(hone|od)|android|windowssce|iemobile|windows\ ce;|avantgo|blackberry|blazer|elaine|hiptop|kindle|midp|mmp|o2|opera\ mini|palm(\ os)?|pda|plucker|pocket|psp|smartphone|symbian|treo|up\.(browser|link)|vodafone|wap|windows\ ce;\ (iemobile|ppc)|xiino [NC,OR]
+    RewriteCond %{HTTP_COOKIE} version=mobile
+    RewriteCond %{HTTP_COOKIE} !version=desktop
+    RewriteCond %{REQUEST_URI} !^/common/pdf_magazin/
+    RewriteRule ^(.*)/index_ger\.html$ $1/mobile_ger.html [R,L] 
+
+</VirtualHost>'), 'server {
+        server_name void.atikon.at;
         include stanzas/mobile_redirect.conf;
 }
 ');
@@ -71,10 +86,31 @@ is($converter.convert('<VirtualHost *:80>
 }
 server {
         server_name www.haubner-stb.de;
-        #ProxyPassMatch ^/(?!error|icons|cgi-bin|htdig|statistik$|news$|facebook$|twitter$|impressum$|net$|(a|A)pp$|(a|A)pp$|sys_static|(a|A)pp$) http://0:8084/ connectiontimeout=20 timeout=900 retry=0 disablereuse=On
-        #RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
-        #RewriteRule ^(.*)/index_ger\.html(.*) $1/app_ger.html$2 [R,NE,L]
         error_page 404 /404.html;
+        location = /news {
+                    return /news.html;
+        }
+
+        location = /facebook {
+                    return https://www.facebook.com/pages/Haubner-Schäfer-Partner/190673467622036;
+        }
+
+        location = /twitter {
+                    return https://twitter.com/haubner_stb;
+        }
+
+        location = /impressum {
+                    return /content/inhalte/kanzlei/impressum/index_ger.html;
+        }
+
+        location = /net {
+                    return /content/inhalte/kanzlei/kanzlei_im_netz/index_ger.html;
+        }
+
+        location = / {
+                    return /content/inhalte/kanzlei/kanzlei_app/index_ger.html;
+        }
+
         location  /facebook {
             
         }
@@ -103,30 +139,9 @@ server {
             
         }
 
-        location = /news {
-                    return /news.html;
-        }
-
-        location = /facebook {
-                    return https://www.facebook.com/pages/Haubner-Schäfer-Partner/190673467622036;
-        }
-
-        location = /twitter {
-                    return https://twitter.com/haubner_stb;
-        }
-
-        location = /impressum {
-                    return /content/inhalte/kanzlei/impressum/index_ger.html;
-        }
-
-        location = /net {
-                    return /content/inhalte/kanzlei/kanzlei_im_netz/index_ger.html;
-        }
-
-        location = / {
-                    return /content/inhalte/kanzlei/kanzlei_app/index_ger.html;
-        }
-
+        #ProxyPassMatch ^/(?!error|icons|cgi-bin|htdig|statistik$|news$|facebook$|twitter$|impressum$|net$|(a|A)pp$|(a|A)pp$|sys_static|(a|A)pp$) http://0:8084/ connectiontimeout=20 timeout=900 retry=0 disablereuse=On
+        #RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
+        #RewriteRule ^(.*)/index_ger\.html(.*) $1/app_ger.html$2 [R,NE,L]
         include stanzas/mobile_redirect.conf;
 }
 ');
