@@ -7,8 +7,8 @@ use Nginx::Config;
 # RewriteCond %{HTTP_HOST} !www\.kollegger.co.at$
 # RewriteRule ^(.*)$ http://www.kollegger.co.at$1 [R=301,L]
 
-subset CanonicalHostCondition of Apache::Config::Actions::RewriteCond where *.canonical_host;
-subset CanonicalHostRewrite of Apache::Config::Actions::RewriteRule where *.regex.Str eq '^(.*)$';
+subset CanonicalHostCondition of Apache::Config::RewriteCond where *.canonical_host;
+subset CanonicalHostRewrite of Apache::Config::RewriteRule where *.regex.Str eq '^(.*)$';
 
 multi method convert_directive(
     @directives where (
@@ -28,18 +28,18 @@ multi method convert_directive(
 #RewriteCond.new(value => "\%\{REQUEST_URI}", regex => "!^/common/pdf_magazin/", options => Any)
 #RewriteRule.new(regex => "^(.*)/index_ger\\.html\$", replacement => Any, options => "[R,L]"
 
-subset MobileCondition of Apache::Config::Actions::RewriteCond
+subset MobileCondition of Apache::Config::RewriteCond
     where {$_.value eq '%{HTTP_USER_AGENT}' and $_.regex ~~ /android/};
 
 multi method convert_directive(
     @directives where @directives[0] ~~ MobileCondition
 ) {
-    True until @directives.shift ~~ Apache::Config::Actions::RewriteRule;
+    True until @directives.shift ~~ Apache::Config::RewriteRule;
     return Nginx::Config::MobileRedirect.new;
 }
 
 multi method convert_directive(
-    @directives where @directives[0] ~~ Apache::Config::Actions::ErrorDocument
+    @directives where @directives[0] ~~ Apache::Config::ErrorDocument
 ) {
     my $error_page = @directives.shift;
     return Nginx::Config::ErrorPage.new(
@@ -48,7 +48,7 @@ multi method convert_directive(
     );
 }
 
-subset ProxyException of Apache::Config::Actions::ProxyPass
+subset ProxyException of Apache::Config::ProxyPass
     where *.uri eq '!';
 
 multi method convert_directive(
@@ -57,7 +57,7 @@ multi method convert_directive(
     return Nginx::Config::Location.new(path => @directives.shift.path);
 }
 
-subset CMSProxy of Apache::Config::Actions::ProxyPassMatch where *.uri eq 'http://0:8084/';
+subset CMSProxy of Apache::Config::ProxyPassMatch where *.uri eq 'http://0:8084/';
 
 multi method convert_directive(
     @directives where @directives[0] ~~ CMSProxy
@@ -71,7 +71,7 @@ multi method convert_directive(
     return Nginx::Config::Location.new(op => '~', path => $directive.regex.Str);
 }
 
-subset CMSProxyStatic of Apache::Config::Actions::ProxyPassMatch
+subset CMSProxyStatic of Apache::Config::ProxyPassMatch
     where *.regex.Str eq '^/static(/content)/(.*)';
 
 multi method convert_directive(
@@ -82,7 +82,7 @@ multi method convert_directive(
 }
 
 multi method convert_directive(
-    @directives where @directives[0] ~~ Apache::Config::Actions::Redirect
+    @directives where @directives[0] ~~ Apache::Config::Redirect
 ) {
     my $redirect = @directives.shift;
     Nginx::Config::Location.new(
@@ -94,7 +94,7 @@ multi method convert_directive(
 }
 
 multi method convert_directive(
-    @directives where @directives[0] ~~ Apache::Config::Actions::RedirectMatch
+    @directives where @directives[0] ~~ Apache::Config::RedirectMatch
 ) {
     my $redirect = @directives.shift;
     return if $redirect.regex.atoms[0].Str eq '/statistik'; # already handled by include
@@ -107,7 +107,7 @@ multi method convert_directive(
     );
 }
 
-subset ObsoleteDirective of Apache::Config::Actions::UnknownDirective
+subset ObsoleteDirective of Apache::Config::UnknownDirective
     where {
         $_.name ~~ /XSendFile/
         or $_.name eq 'RewriteEngine'
@@ -137,7 +137,7 @@ method convert(Str $config) {
     my @cms = $parser.parse(
         $config,
         :actions($actions),
-    ).ast.virtual_hosts.grep(Apache::Config::Actions::VirtualHost);
+    ).ast.virtual_hosts.grep(Apache::Config::VirtualHost);
 
     my Str $nginx_config = '';
 
