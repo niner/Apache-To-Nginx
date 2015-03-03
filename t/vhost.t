@@ -61,6 +61,18 @@ is($converter.convert('<VirtualHost *:80>
 is($converter.convert('<VirtualHost *:80>
     DocumentRoot /srv/www/htdocs/void.atikon.at
     ServerName void.atikon.at
+    RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
+    RewriteRule ^(.*)/index.html(.*) $1/app_ger.html$2 [R]
+</VirtualHost>'), 'server {
+        server_name void.atikon.at;
+        if ($http_user_agent ~* "AppWebView") {
+                rewrite "^(.*)/index.html(.*)" $1/app_ger.html$2 redirect;
+        }
+}
+');
+is($converter.convert('<VirtualHost *:80>
+    DocumentRoot /srv/www/htdocs/void.atikon.at
+    ServerName void.atikon.at
     ProxyPassMatch ^/(?!error|icons|cgi-bin|htdig|statistik$|news$|sys_static) http://0:8084/ connectiontimeout=20 timeout=900 retry=0 disablereuse=On
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
@@ -181,9 +193,8 @@ server {
         include stanzas/cms.conf;
         location ~ ^/(news$|facebook$|twitter$|impressum$|net$|(a|A)pp$|(a|A)pp$|(a|A)pp$) {
         }
-        #RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
-        location ~ ^(.*)/index_ger\.html(.*) {
-                return $1/app_ger.html$2;
+        if ($http_user_agent ~* "AppWebView") {
+                rewrite "^(.*)/index_ger\.html(.*)" $1/app_ger.html$2 redirect;
         }
         include stanzas/mobile_redirect.conf;
 }

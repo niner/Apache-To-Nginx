@@ -33,6 +33,10 @@ class RewriteCond is Directive {
         return $0.Str.subst(/\\/, '');
     }
 
+    method is_case_sensitive() {
+        return ($.options !~~ /<wb>NC<wb>/).Bool;
+    }
+
     method Str() {
         return 'RewriteCond ' ~ ($.value.Str, $.regex.Str, $.options.Str).join(' ');
     }
@@ -42,6 +46,10 @@ class RewriteRule is Directive {
     has $.regex;
     has $.replacement;
     has $.options = '';
+
+    method is_redirect() {
+        return ($.options ~~ /<wb>R<wb>\=?/).Bool;
+    }
 
     method Str() {
         return 'RewriteRule ' ~ ($.regex.Str, $.replacement.Str, $.options.Str).join(' ');

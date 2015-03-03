@@ -116,12 +116,13 @@ multi method convert_directive(
 subset RewriteExactRedirect of Apache::Config::RewriteRule
     where {
         $_.regex.is_exact_string_match
-        and $_.options ~~ /<wb>R\=/
+        and $_.is_redirect
     };
 
 multi method convert_directive(
     @directives where @directives[0] ~~ RewriteExactRedirect
 ) {
+    nextsame if $*if_block; # location in if is illegal
     my $redirect = @directives.shift;
     return Nginx::Config::Location.new(
         op         => '=',
@@ -132,12 +133,12 @@ multi method convert_directive(
     );
 }
 
-subset RewriteRedirect of Apache::Config::RewriteRule
-    where { $_.options ~~ /<wb>R<wb>\=?/ };
+subset RewriteRedirect of Apache::Config::RewriteRule where *.is_redirect;
 
 multi method convert_directive(
     @directives where @directives[0] ~~ RewriteRedirect
 ) {
+    nextsame if $*if_block; # location in if is illegal
     my $redirect = @directives.shift;
     return Nginx::Config::Location.new(
         op         => '~',
@@ -155,6 +156,23 @@ multi method convert_directive(
     return Nginx::Config::Rewrite.new(
         regex       => $rewrite.regex.Str,
         replacement => $rewrite.replacement,
+        redirect    => $rewrite.is_redirect,
+    );
+}
+
+my %variable_map = (
+    '%{HTTP_USER_AGENT}' => '$http_user_agent',
+);
+multi method convert_directive(
+    @directives where @directives[0] ~~ Apache::Config::RewriteCond
+) {
+    my $cond = @directives.shift;
+    $*if_block = True;
+    return Nginx::Config::If.new(
+        variable   => %variable_map{$cond.value.Str},
+        op         => $cond.is_case_sensitive ?? '~' !! '~*',
+        value      => $cond.regex.Str,
+        directives => self.convert_directive(@directives),
     );
 }
 
@@ -196,6 +214,7 @@ method convert(Str $config) {
         my @nginx_directives;
         my @directives = $cms.directives;
         my $*canonical_host;
+        my Bool $*if_block = False;
         while @directives {
             push @nginx_directives, self.convert_directive(@directives);
         }

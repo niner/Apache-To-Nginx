@@ -73,9 +73,24 @@ class Return {
 class Rewrite {
     has $.regex;
     has $.replacement;
+    has Bool $.redirect = False;
 
     method Str {
-        return qq/rewrite "$.regex" $.replacement;/;
+        return qq/rewrite "$.regex" $.replacement/ ~ ($.redirect ?? ' redirect' !! '') ~ ';';
+    }
+}
+
+class If {
+    has $.variable;
+    has $.op;
+    has $.value;
+    has @.directives;
+
+    method Str {
+        return
+            qq/if ($.variable $.op "$.value") \{\n/
+            ~ (@.directives ?? @.directives».Str.join("\n").indent(8) ~ "\n" !! '')
+            ~ '}';
     }
 }
 
