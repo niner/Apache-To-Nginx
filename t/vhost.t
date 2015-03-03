@@ -52,6 +52,15 @@ is($converter.convert('<VirtualHost *:80>
 is($converter.convert('<VirtualHost *:80>
     DocumentRoot /srv/www/htdocs/void.atikon.at
     ServerName void.atikon.at
+    RewriteRule ^/foo/bar$ /content/foo/bar
+</VirtualHost>'), 'server {
+        server_name void.atikon.at;
+        rewrite "^/foo/bar$" /content/foo/bar;
+}
+');
+is($converter.convert('<VirtualHost *:80>
+    DocumentRoot /srv/www/htdocs/void.atikon.at
+    ServerName void.atikon.at
     ProxyPassMatch ^/(?!error|icons|cgi-bin|htdig|statistik$|news$|sys_static) http://0:8084/ connectiontimeout=20 timeout=900 retry=0 disablereuse=On
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
@@ -173,7 +182,9 @@ server {
         location ~ ^/(news$|facebook$|twitter$|impressum$|net$|(a|A)pp$|(a|A)pp$|(a|A)pp$) {
         }
         #RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
-        #RewriteRule ^(.*)/index_ger\.html(.*) $1/app_ger.html$2 [R,NE,L]
+        location ~ ^(.*)/index_ger\.html(.*) {
+                return $1/app_ger.html$2;
+        }
         include stanzas/mobile_redirect.conf;
 }
 ');

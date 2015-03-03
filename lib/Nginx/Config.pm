@@ -70,4 +70,13 @@ class Return {
     }
 }
 
+class Rewrite {
+    has $.regex;
+    has $.replacement;
+
+    method Str {
+        return qq/rewrite "$.regex" $.replacement;/;
+    }
+}
+
 # vim: ft=perl6

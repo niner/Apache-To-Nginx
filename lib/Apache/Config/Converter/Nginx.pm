@@ -133,7 +133,7 @@ multi method convert_directive(
 }
 
 subset RewriteRedirect of Apache::Config::RewriteRule
-    where { $_.options ~~ /<wb>R\=/ };
+    where { $_.options ~~ /<wb>R<wb>\=?/ };
 
 multi method convert_directive(
     @directives where @directives[0] ~~ RewriteRedirect
@@ -145,6 +145,16 @@ multi method convert_directive(
         directives => Nginx::Config::Return.new(
             value => $redirect.replacement,
         ),
+    );
+}
+
+multi method convert_directive(
+    @directives where @directives[0] ~~ Apache::Config::RewriteRule
+) {
+    my $rewrite = @directives.shift;
+    return Nginx::Config::Rewrite.new(
+        regex       => $rewrite.regex.Str,
+        replacement => $rewrite.replacement,
     );
 }
 
