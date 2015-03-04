@@ -47,6 +47,12 @@ class AppWebViewRedirect {
     }
 }
 
+class InAppRedirect {
+    method Str {
+        return 'include stanzas/in_app_redirect.conf;';
+    }
+}
+
 class Generic {
     has $.content;
 

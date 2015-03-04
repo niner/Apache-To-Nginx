@@ -83,6 +83,18 @@ is($converter.convert('<VirtualHost *:80>
 is($converter.convert('<VirtualHost *:80>
     DocumentRoot /srv/www/htdocs/void.atikon.at
     ServerName void.atikon.at
+    RewriteCond %{HTTP_USER_AGENT} InApp [NC,OR]
+    RewriteCond %{HTTP_COOKIE} version=mobile
+    RewriteCond %{HTTP_COOKIE} !version=desktop
+    RewriteRule ^\/(.*)(\/|\/index\.html)$ $1\/mobile_ger.html [R=301,L]
+</VirtualHost>'), 'server {
+        server_name void.atikon.at;
+        include stanzas/in_app_redirect.conf;
+}
+');
+is($converter.convert('<VirtualHost *:80>
+    DocumentRoot /srv/www/htdocs/void.atikon.at
+    ServerName void.atikon.at
     ProxyPassMatch ^/(?!error|icons|cgi-bin|htdig|statistik$|news$|sys_static) http://0:8084/ connectiontimeout=20 timeout=900 retry=0 disablereuse=On
 </VirtualHost>'), 'server {
         server_name void.atikon.at;

@@ -38,6 +38,9 @@ multi method convert_directive(
     return Nginx::Config::MobileRedirect.new;
 }
 
+#RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
+#RewriteRule ^(.*)/index.html(.*) $1/app_ger.html$2 [R]
+
 subset AppWebViewCondition of Apache::Config::RewriteCond
     where {$_.value eq '%{HTTP_USER_AGENT}' and $_.regex eq 'AppWebView'};
 
@@ -46,6 +49,21 @@ multi method convert_directive(
 ) {
     True until @directives.shift ~~ Apache::Config::RewriteRule;
     return Nginx::Config::AppWebViewRedirect.new;
+}
+
+#RewriteCond %{HTTP_USER_AGENT} InApp [NC,OR]
+#RewriteCond %{HTTP_COOKIE} version=mobile
+#RewriteCond %{HTTP_COOKIE} !version=desktop
+#RewriteRule ^\/(.*)(\/|\/index\.html)$ $1\/mobile_ger.html [R=301,L]
+
+subset InAppCondition of Apache::Config::RewriteCond
+    where {$_.value eq '%{HTTP_USER_AGENT}' and $_.regex eq 'InApp'};
+
+multi method convert_directive(
+    @directives where @directives[0] ~~ InAppCondition
+) {
+    True until @directives.shift ~~ Apache::Config::RewriteRule;
+    return Nginx::Config::InAppRedirect.new;
 }
 
 multi method convert_directive(
@@ -130,9 +148,8 @@ subset RewriteExactRedirect of Apache::Config::RewriteRule
     };
 
 multi method convert_directive(
-    @directives where @directives[0] ~~ RewriteExactRedirect
+    @directives where { not $*if_block and @directives[0] ~~ RewriteExactRedirect }
 ) {
-    #nextsame if $*if_block; # location in if is illegal
     my $redirect = @directives.shift;
     return Nginx::Config::Location.new(
         op         => '=',
@@ -146,9 +163,8 @@ multi method convert_directive(
 subset RewriteRedirect of Apache::Config::RewriteRule where *.is_redirect;
 
 multi method convert_directive(
-    @directives where @directives[0] ~~ RewriteRedirect
+    @directives where { not $*if_block and @directives[0] ~~ RewriteRedirect }
 ) {
-    nextsame if $*if_block; # location in if is illegal
     my $redirect = @directives.shift;
     return Nginx::Config::Location.new(
         op         => '~',
