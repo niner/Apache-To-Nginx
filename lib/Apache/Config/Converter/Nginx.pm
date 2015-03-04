@@ -38,6 +38,16 @@ multi method convert_directive(
     return Nginx::Config::MobileRedirect.new;
 }
 
+subset AppWebViewCondition of Apache::Config::RewriteCond
+    where {$_.value eq '%{HTTP_USER_AGENT}' and $_.regex eq 'AppWebView'};
+
+multi method convert_directive(
+    @directives where @directives[0] ~~ AppWebViewCondition
+) {
+    True until @directives.shift ~~ Apache::Config::RewriteRule;
+    return Nginx::Config::AppWebViewRedirect.new;
+}
+
 multi method convert_directive(
     @directives where @directives[0] ~~ Apache::Config::ErrorDocument
 ) {
@@ -122,7 +132,7 @@ subset RewriteExactRedirect of Apache::Config::RewriteRule
 multi method convert_directive(
     @directives where @directives[0] ~~ RewriteExactRedirect
 ) {
-    nextsame if $*if_block; # location in if is illegal
+    #nextsame if $*if_block; # location in if is illegal
     my $redirect = @directives.shift;
     return Nginx::Config::Location.new(
         op         => '=',

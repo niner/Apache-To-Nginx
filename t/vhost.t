@@ -61,13 +61,23 @@ is($converter.convert('<VirtualHost *:80>
 is($converter.convert('<VirtualHost *:80>
     DocumentRoot /srv/www/htdocs/void.atikon.at
     ServerName void.atikon.at
+    RewriteCond %{HTTP_USER_AGENT} FooBar [NC]
+    RewriteRule ^(.*)/index.html(.*) $1/app_ger.html$2 [R]
+</VirtualHost>'), 'server {
+        server_name void.atikon.at;
+        if ($http_user_agent ~* "FooBar") {
+                rewrite "^(.*)/index.html(.*)" $1/app_ger.html$2 redirect;
+        }
+}
+');
+is($converter.convert('<VirtualHost *:80>
+    DocumentRoot /srv/www/htdocs/void.atikon.at
+    ServerName void.atikon.at
     RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
     RewriteRule ^(.*)/index.html(.*) $1/app_ger.html$2 [R]
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
-        if ($http_user_agent ~* "AppWebView") {
-                rewrite "^(.*)/index.html(.*)" $1/app_ger.html$2 redirect;
-        }
+        include stanzas/app_web_view_redirect.conf;
 }
 ');
 is($converter.convert('<VirtualHost *:80>
@@ -193,9 +203,7 @@ server {
         include stanzas/cms.conf;
         location ~ ^/(news$|facebook$|twitter$|impressum$|net$|(a|A)pp$|(a|A)pp$|(a|A)pp$) {
         }
-        if ($http_user_agent ~* "AppWebView") {
-                rewrite "^(.*)/index_ger\.html(.*)" $1/app_ger.html$2 redirect;
-        }
+        include stanzas/app_web_view_redirect.conf;
         include stanzas/mobile_redirect.conf;
 }
 ');

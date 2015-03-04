@@ -41,6 +41,12 @@ class MobileRedirect {
     }
 }
 
+class AppWebViewRedirect {
+    method Str {
+        return 'include stanzas/app_web_view_redirect.conf;';
+    }
+}
+
 class Generic {
     has $.content;
 
