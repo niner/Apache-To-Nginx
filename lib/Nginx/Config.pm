@@ -61,6 +61,12 @@ class InAppRedirect {
     }
 }
 
+class StandardRedirects {
+    method Str {
+        return 'include stanzas/standard_redirects.conf;';
+    }
+}
+
 class Generic {
     has $.content;
 

@@ -261,6 +261,7 @@ method convert(Str $config) {
         while @directives {
             push @nginx_directives, self.convert_directive(@directives);
         }
+        push @nginx_directives, Nginx::Config::StandardRedirects.new;
 
         if %*vhost<canonical_host> and %*vhost<canonical_host> eq $cms.name {
             $nginx_config ~= Nginx::Config::Server.new(
