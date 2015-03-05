@@ -152,7 +152,7 @@ multi method convert_directive(
     )
 ) {
     @directives.shift;
-    return; # handled by standard_redirects.conf
+    return; # handled by standard_directives.conf
 }
 
 multi method convert_directive(
@@ -278,7 +278,7 @@ method convert(Str $config) {
         while @directives {
             push @nginx_directives, self.convert_directive(@directives);
         }
-        push @nginx_directives, Nginx::Config::StandardRedirects.new;
+        push @nginx_directives, Nginx::Config::StandardDirectives.new;
 
         if %*vhost<canonical_host> and %*vhost<canonical_host> eq $cms.name {
             $nginx_config ~= Nginx::Config::Server.new(

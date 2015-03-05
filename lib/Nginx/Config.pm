@@ -61,9 +61,9 @@ class InAppRedirect {
     }
 }
 
-class StandardRedirects {
+class StandardDirectives {
     method Str {
-        return 'include stanzas/standard_redirects.conf;';
+        return 'include stanzas/standard_directives.conf;';
     }
 }
 

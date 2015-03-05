@@ -10,7 +10,7 @@ is($converter.convert('<VirtualHost *:80>
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
         root /srv/www/htdocs/void.atikon.at;
-        include stanzas/standard_redirects.conf;
+        include stanzas/standard_directives.conf;
 }
 ');
 is($converter.convert('<VirtualHost *:80>
@@ -25,7 +25,7 @@ is($converter.convert('<VirtualHost *:80>
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
         include stanzas/mobile_redirect.conf;
-        include stanzas/standard_redirects.conf;
+        include stanzas/standard_directives.conf;
 }
 ');
 is($converter.convert('<VirtualHost *:80>
@@ -33,7 +33,7 @@ is($converter.convert('<VirtualHost *:80>
     RedirectMatch /news$ /news.html
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
-        include stanzas/standard_redirects.conf;
+        include stanzas/standard_directives.conf;
 }
 ');
 is($converter.convert('<VirtualHost *:80>
@@ -44,7 +44,7 @@ is($converter.convert('<VirtualHost *:80>
         location = /foo/bar {
                 return /content/foo/bar;
         }
-        include stanzas/standard_redirects.conf;
+        include stanzas/standard_directives.conf;
 }
 ');
 is($converter.convert('<VirtualHost *:80>
@@ -55,7 +55,7 @@ is($converter.convert('<VirtualHost *:80>
         location ~ ^/global/site/leist_steuerberatung.html {
                 return /content/steuerberater_wirtschaftspruefer/leistungen/steuerberater_rosenheim/index.html;
         }
-        include stanzas/standard_redirects.conf;
+        include stanzas/standard_directives.conf;
 }
 ');
 is($converter.convert('<VirtualHost *:80>
@@ -64,7 +64,7 @@ is($converter.convert('<VirtualHost *:80>
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
         rewrite "^/foo/bar$" /content/foo/bar;
-        include stanzas/standard_redirects.conf;
+        include stanzas/standard_directives.conf;
 }
 ');
 is($converter.convert('<VirtualHost *:80>
@@ -76,7 +76,7 @@ is($converter.convert('<VirtualHost *:80>
         if ($http_user_agent ~* "FooBar") {
                 rewrite "^(.*)/index.html(.*)" $1/app_ger.html$2 redirect;
         }
-        include stanzas/standard_redirects.conf;
+        include stanzas/standard_directives.conf;
 }
 ');
 is($converter.convert('<VirtualHost *:80>
@@ -86,7 +86,7 @@ is($converter.convert('<VirtualHost *:80>
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
         include stanzas/app_web_view_redirect.conf;
-        include stanzas/standard_redirects.conf;
+        include stanzas/standard_directives.conf;
 }
 ');
 is($converter.convert('<VirtualHost *:80>
@@ -101,7 +101,7 @@ is($converter.convert('<VirtualHost *:80>
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
         include stanzas/app_web_view_redirect.conf;
-        include stanzas/standard_redirects.conf;
+        include stanzas/standard_directives.conf;
 }
 ');
 is($converter.convert('<VirtualHost *:80>
@@ -113,7 +113,7 @@ is($converter.convert('<VirtualHost *:80>
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
         include stanzas/in_app_redirect.conf;
-        include stanzas/standard_redirects.conf;
+        include stanzas/standard_directives.conf;
 }
 ');
 is($converter.convert('<VirtualHost *:80>
@@ -124,7 +124,7 @@ is($converter.convert('<VirtualHost *:80>
         include stanzas/cms.conf;
         location ~ ^/(news$) {
         }
-        include stanzas/standard_redirects.conf;
+        include stanzas/standard_directives.conf;
 }
 ');
 is($converter.convert('<VirtualHost *:80>
@@ -140,7 +140,7 @@ is($converter.convert('<VirtualHost *:80>
 }
 server {
         server_name void.atikon.at;
-        include stanzas/standard_redirects.conf;
+        include stanzas/standard_directives.conf;
 }
 ');
 
@@ -238,7 +238,7 @@ server {
         }
         include stanzas/app_web_view_redirect.conf;
         include stanzas/mobile_redirect.conf;
-        include stanzas/standard_redirects.conf;
+        include stanzas/standard_directives.conf;
 }
 ');
 
