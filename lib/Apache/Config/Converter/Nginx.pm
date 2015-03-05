@@ -85,6 +85,10 @@ multi method convert_directive(
     @directives where @directives[0] ~~ Apache::Config::ErrorDocument
 ) {
     my $error_page = @directives.shift;
+
+    # handeled by standard_directives.conf:
+    return if $error_page.status == 404 and $error_page.uri eq '/404.html';
+
     return Nginx::Config::ErrorPage.new(
         status => $error_page.status,
         uri    => $error_page.uri,

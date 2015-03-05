@@ -204,7 +204,6 @@ is($converter.convert('<VirtualHost *:80>
 server {
         server_name www.haubner-stb.de;
         root /srv/www/htdocs/kunden/haubner-stb.de;
-        error_page 404 /404.html;
         location = /facebook {
                 return https://www.facebook.com/pages/Haubner-Schäfer-Partner/190673467622036;
         }
