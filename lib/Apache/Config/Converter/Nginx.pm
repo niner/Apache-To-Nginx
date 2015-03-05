@@ -59,6 +59,8 @@ multi method convert_directive(
     @directives where @directives[0] ~~ AppWebViewCondition
 ) {
     True until @directives.shift ~~ Apache::Config::RewriteRule;
+    return if $*app_web_view;
+    $*app_web_view = True;
     return Nginx::Config::AppWebViewRedirect.new;
 }
 
@@ -253,8 +255,9 @@ method convert(Str $config) {
     for @cms -> $cms {
         my @nginx_directives;
         my @directives = $cms.directives;
-        my $*canonical_host;
+        my Str $*canonical_host;
         my Bool $*if_block = False;
+        my Bool $*app_web_view = False;
         while @directives {
             push @nginx_directives, self.convert_directive(@directives);
         }

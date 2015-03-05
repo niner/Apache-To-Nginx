@@ -76,6 +76,20 @@ is($converter.convert('<VirtualHost *:80>
 ');
 is($converter.convert('<VirtualHost *:80>
     ServerName void.atikon.at
+    RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
+    RewriteRule ^(.*)/index.html(.*) $1/app_ger.html$2 [R,NE,L]
+    RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
+    RewriteRule ^(.*)/$ $1/app_ger.html$2 [R,NE,L]
+    RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)/app(.*).html$ $1/mobile$2.html [R=301,L]
+</VirtualHost>'), 'server {
+        server_name void.atikon.at;
+        include stanzas/app_web_view_redirect.conf;
+}
+');
+is($converter.convert('<VirtualHost *:80>
+    ServerName void.atikon.at
     RewriteCond %{HTTP_USER_AGENT} InApp [NC,OR]
     RewriteCond %{HTTP_COOKIE} version=mobile
     RewriteCond %{HTTP_COOKIE} !version=desktop
