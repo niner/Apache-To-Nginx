@@ -46,6 +46,8 @@ multi method convert_directive(
     @directives where @directives[0] ~~ MobileCondition
 ) {
     True until @directives.shift ~~ Apache::Config::RewriteRule;
+    return if %*vhost<mobile_redirect>;
+    %*vhost<mobile_redirect> = True;
     return Nginx::Config::MobileRedirect.new;
 }
 
