@@ -138,6 +138,19 @@ multi method convert_directive(
     )
 }
 
+#RedirectMatch /news$ /news.html
+
+multi method convert_directive(
+    @directives where (
+        @directives[0] ~~ Apache::Config::RedirectMatch
+        and @directives[0].regex.Str eq '/news$'
+        and @directives[0].uri eq '/news.html'
+    )
+) {
+    @directives.shift;
+    return; # handled by standard_redirects.conf
+}
+
 multi method convert_directive(
     @directives where @directives[0] ~~ Apache::Config::RedirectMatch
 ) {

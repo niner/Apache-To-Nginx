@@ -30,6 +30,14 @@ is($converter.convert('<VirtualHost *:80>
 ');
 is($converter.convert('<VirtualHost *:80>
     ServerName void.atikon.at
+    RedirectMatch /news$ /news.html
+</VirtualHost>'), 'server {
+        server_name void.atikon.at;
+        include stanzas/standard_redirects.conf;
+}
+');
+is($converter.convert('<VirtualHost *:80>
+    ServerName void.atikon.at
     RewriteRule ^/foo/bar$ /content/foo/bar [R=301,L]
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
@@ -197,9 +205,6 @@ server {
         server_name www.haubner-stb.de;
         root /srv/www/htdocs/kunden/haubner-stb.de;
         error_page 404 /404.html;
-        location = /news {
-                return /news.html;
-        }
         location = /facebook {
                 return https://www.facebook.com/pages/Haubner-Schäfer-Partner/190673467622036;
         }
