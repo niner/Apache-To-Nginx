@@ -22,6 +22,17 @@ multi method convert_directive(
     return;
 }
 
+# DocumentRoot /srv/www/htdocs/void.atikon.at
+
+multi method convert_directive(
+    @directives where @directives[0] ~~ Apache::Config::DocumentRoot
+) {
+    my $document_root = @directives.shift;
+    return Nginx::Config::Root.new(
+        path => $document_root.path,
+    );
+}
+
 #RewriteCond.new(value => "\%\{HTTP_USER_AGENT}", regex => "ip(hone|od)|android|windowssce|iemobile|windows\\ ce;|avantgo|blackberry|blazer|elaine|hiptop|kindle|midp|mmp|o2|opera\\ mini|palm(\\ os)?|pda|plucker|pocket|psp|smartphone|symbian|treo|up\\.(browser|link)|vodafone|wap|windows\\ ce;\\ (iemobile|ppc)|xiino", options => "[NC,OR]")
 #RewriteCond.new(value => "\%\{HTTP_COOKIE}", regex => "version=mobile", options => Any)
 #RewriteCond.new(value => "\%\{HTTP_COOKIE}", regex => "!version=desktop", options => Any)

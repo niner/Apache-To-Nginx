@@ -23,6 +23,14 @@ class ErrorPage {
     }
 }
 
+class Root {
+    has $.path;
+
+    method Str {
+        return "root $.path;";
+    }
+}
+
 class CMS {
     method Str {
         return 'include stanzas/cms.conf;';

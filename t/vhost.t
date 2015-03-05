@@ -9,11 +9,10 @@ is($converter.convert('<VirtualHost *:80>
     ServerName void.atikon.at
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
-
+        root /srv/www/htdocs/void.atikon.at;
 }
 ');
 is($converter.convert('<VirtualHost *:80>
-    DocumentRoot /srv/www/htdocs/void.atikon.at
     ServerName void.atikon.at
 
     RewriteCond %{HTTP_USER_AGENT} ip(hone|od)|android|windowssce|iemobile|windows\ ce;|avantgo|blackberry|blazer|elaine|hiptop|kindle|midp|mmp|o2|opera\ mini|palm(\ os)?|pda|plucker|pocket|psp|smartphone|symbian|treo|up\.(browser|link)|vodafone|wap|windows\ ce;\ (iemobile|ppc)|xiino [NC,OR]
@@ -28,7 +27,6 @@ is($converter.convert('<VirtualHost *:80>
 }
 ');
 is($converter.convert('<VirtualHost *:80>
-    DocumentRoot /srv/www/htdocs/void.atikon.at
     ServerName void.atikon.at
     RewriteRule ^/foo/bar$ /content/foo/bar [R=301,L]
 </VirtualHost>'), 'server {
@@ -39,7 +37,6 @@ is($converter.convert('<VirtualHost *:80>
 }
 ');
 is($converter.convert('<VirtualHost *:80>
-    DocumentRoot /srv/www/htdocs/void.atikon.at
     ServerName void.atikon.at
     RewriteRule ^/global/site/leist_steuerberatung.html /content/steuerberater_wirtschaftspruefer/leistungen/steuerberater_rosenheim/index.html [R=301,L]
 </VirtualHost>'), 'server {
@@ -50,7 +47,6 @@ is($converter.convert('<VirtualHost *:80>
 }
 ');
 is($converter.convert('<VirtualHost *:80>
-    DocumentRoot /srv/www/htdocs/void.atikon.at
     ServerName void.atikon.at
     RewriteRule ^/foo/bar$ /content/foo/bar
 </VirtualHost>'), 'server {
@@ -59,7 +55,6 @@ is($converter.convert('<VirtualHost *:80>
 }
 ');
 is($converter.convert('<VirtualHost *:80>
-    DocumentRoot /srv/www/htdocs/void.atikon.at
     ServerName void.atikon.at
     RewriteCond %{HTTP_USER_AGENT} FooBar [NC]
     RewriteRule ^(.*)/index.html(.*) $1/app_ger.html$2 [R]
@@ -71,7 +66,6 @@ is($converter.convert('<VirtualHost *:80>
 }
 ');
 is($converter.convert('<VirtualHost *:80>
-    DocumentRoot /srv/www/htdocs/void.atikon.at
     ServerName void.atikon.at
     RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
     RewriteRule ^(.*)/index.html(.*) $1/app_ger.html$2 [R]
@@ -81,7 +75,6 @@ is($converter.convert('<VirtualHost *:80>
 }
 ');
 is($converter.convert('<VirtualHost *:80>
-    DocumentRoot /srv/www/htdocs/void.atikon.at
     ServerName void.atikon.at
     RewriteCond %{HTTP_USER_AGENT} InApp [NC,OR]
     RewriteCond %{HTTP_COOKIE} version=mobile
@@ -93,7 +86,6 @@ is($converter.convert('<VirtualHost *:80>
 }
 ');
 is($converter.convert('<VirtualHost *:80>
-    DocumentRoot /srv/www/htdocs/void.atikon.at
     ServerName void.atikon.at
     ProxyPassMatch ^/(?!error|icons|cgi-bin|htdig|statistik$|news$|sys_static) http://0:8084/ connectiontimeout=20 timeout=900 retry=0 disablereuse=On
 </VirtualHost>'), 'server {
@@ -179,6 +171,7 @@ is($converter.convert('<VirtualHost *:80>
 }
 server {
         server_name www.haubner-stb.de;
+        root /srv/www/htdocs/kunden/haubner-stb.de;
         error_page 404 /404.html;
         location = /news {
                 return /news.html;

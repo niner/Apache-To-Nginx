@@ -43,6 +43,12 @@ method error_document($/) {
     );
 }
 
+method document_root($/) {
+    make Apache::Config::DocumentRoot.new(
+        path => $<path>.Str,
+    );
+}
+
 method rewrite_cond($/) {
     make Apache::Config::RewriteCond.new(
         value   => $<value>.ast,

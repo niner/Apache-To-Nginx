@@ -98,6 +98,14 @@ class ProxyPassMatch is Directive {
     }
 }
 
+class DocumentRoot is Directive {
+    has $.path;
+
+    method Str() {
+        return "DocumentRoot $.path";
+    }
+}
+
 class UnknownDirective is Directive {
     has $.name;
     has $.data;
