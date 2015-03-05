@@ -201,7 +201,10 @@ my %variable_map = (
     '%{HTTP_USER_AGENT}' => '$http_user_agent',
 );
 multi method convert_directive(
-    @directives where @directives[0] ~~ Apache::Config::RewriteCond
+    @directives where {
+        @directives[0] ~~ Apache::Config::RewriteCond
+        and %variable_map{@directives[0].value.Str}:exists
+    }
 ) {
     my $cond = @directives.shift;
     $*if_block = True;
