@@ -115,7 +115,7 @@ multi method convert_directive(
     @directives where @directives[0] ~~ Apache::Config::Redirect
 ) {
     my $redirect = @directives.shift;
-    Nginx::Config::Location.new(
+    return Nginx::Config::Location.new(
         path       => $redirect.path,
         directives => Nginx::Config::Return.new(
             value => $redirect.uri,
@@ -204,12 +204,12 @@ multi method convert_directive(
 
 subset ObsoleteDirective of Apache::Config::UnknownDirective
     where {
-        $_.name ~~ /XSendFile/
-        or $_.name eq 'RewriteEngine'
-        or $_.data ~~ /zms_instance/
-        or $_.name eq 'Alias' and .data ~~ /static/
-        or $_.name eq 'ProxyPassReverse'
-        or $_.name eq 'ProxyPreserveHost'
+        .name ~~ /XSendFile/
+        or .name eq 'RewriteEngine'
+        or .data ~~ /zms_instance/
+        or .name eq 'Alias' and .data ~~ /static/
+        or .name eq 'ProxyPassReverse'
+        or .name eq 'ProxyPreserveHost'
     };
 
 multi method convert_directive(
