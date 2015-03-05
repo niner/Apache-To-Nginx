@@ -16,7 +16,7 @@ multi method convert_directive(
         and @directives[1] ~~ CanonicalHostRewrite
     )
 ) {
-    $*canonical_host = @directives[0].canonical_host;
+    %*vhost<canonical_host> = @directives[0].canonical_host;
     shift @directives;
     shift @directives;
     return;
@@ -59,8 +59,8 @@ multi method convert_directive(
     @directives where @directives[0] ~~ AppWebViewCondition
 ) {
     True until @directives.shift ~~ Apache::Config::RewriteRule;
-    return if $*app_web_view;
-    $*app_web_view = True;
+    return if %*vhost<app_web_view>;
+    %*vhost<app_web_view> = True;
     return Nginx::Config::AppWebViewRedirect.new;
 }
 
@@ -161,7 +161,7 @@ subset RewriteExactRedirect of Apache::Config::RewriteRule
     };
 
 multi method convert_directive(
-    @directives where { not $*if_block and @directives[0] ~~ RewriteExactRedirect }
+    @directives where { not %*vhost<if_block> and @directives[0] ~~ RewriteExactRedirect }
 ) {
     my $redirect = @directives.shift;
     return Nginx::Config::Location.new(
@@ -176,7 +176,7 @@ multi method convert_directive(
 subset RewriteRedirect of Apache::Config::RewriteRule where *.is_redirect;
 
 multi method convert_directive(
-    @directives where { not $*if_block and @directives[0] ~~ RewriteRedirect }
+    @directives where { not %*vhost<if_block> and @directives[0] ~~ RewriteRedirect }
 ) {
     my $redirect = @directives.shift;
     return Nginx::Config::Location.new(
@@ -209,7 +209,7 @@ multi method convert_directive(
     }
 ) {
     my $cond = @directives.shift;
-    $*if_block = True;
+    %*vhost<if_block> = True;
     return Nginx::Config::If.new(
         variable   => %variable_map{$cond.value.Str},
         op         => $cond.is_case_sensitive ?? '~' !! '~*',
@@ -255,14 +255,12 @@ method convert(Str $config) {
     for @cms -> $cms {
         my @nginx_directives;
         my @directives = $cms.directives;
-        my Str $*canonical_host;
-        my Bool $*if_block = False;
-        my Bool $*app_web_view = False;
+        my %*vhost;
         while @directives {
             push @nginx_directives, self.convert_directive(@directives);
         }
 
-        if $*canonical_host and $*canonical_host eq $cms.name {
+        if %*vhost<canonical_host> and %*vhost<canonical_host> eq $cms.name {
             $nginx_config ~= Nginx::Config::Server.new(
                 names => $cms.aliases,
                 directives => [
@@ -270,7 +268,7 @@ method convert(Str $config) {
                 ],
             ).Str;
             $nginx_config ~= Nginx::Config::Server.new(
-                names      => $*canonical_host,
+                names      => %*vhost<canonical_host>,
                 directives => @nginx_directives,
             ).Str;
         }
