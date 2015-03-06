@@ -73,9 +73,8 @@ is($converter.convert('<VirtualHost *:80>
     RewriteRule ^(.*)$ http://www.datevsteuerberater.at/content/inhalte/efibu/index.html [R=301,L]
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
-        #RewriteCond %{HTTP_HOST} efibu.at$
-        location ~ ^(.*)$ {
-                return http://www.datevsteuerberater.at/content/inhalte/efibu/index.html;
+        if ($host ~ "efibu.at$") {
+                rewrite "^(.*)$" http://www.datevsteuerberater.at/content/inhalte/efibu/index.html redirect;
         }
         include stanzas/standard_directives.conf;
 }
