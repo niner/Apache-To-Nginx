@@ -69,6 +69,19 @@ is($converter.convert('<VirtualHost *:80>
 ');
 is($converter.convert('<VirtualHost *:80>
     ServerName void.atikon.at
+    RewriteCond %{HTTP_HOST} efibu.at$
+    RewriteRule ^(.*)$ http://www.datevsteuerberater.at/content/inhalte/efibu/index.html [R=301,L]
+</VirtualHost>'), 'server {
+        server_name void.atikon.at;
+        #RewriteCond %{HTTP_HOST} efibu.at$
+        location ~ ^(.*)$ {
+                return http://www.datevsteuerberater.at/content/inhalte/efibu/index.html;
+        }
+        include stanzas/standard_directives.conf;
+}
+');
+is($converter.convert('<VirtualHost *:80>
+    ServerName void.atikon.at
     RewriteCond %{HTTP_USER_AGENT} FooBar [NC]
     RewriteRule ^(.*)/index.html(.*) $1/app_ger.html$2 [R]
 </VirtualHost>'), 'server {

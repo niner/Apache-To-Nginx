@@ -38,7 +38,7 @@ class RewriteCond is Directive {
     }
 
     method Str() {
-        return 'RewriteCond ' ~ ($.value.Str, $.regex.Str, $.options.Str).join(' ');
+        return 'RewriteCond ' ~ ($.value.Str, $.regex.Str, $.options.Str).grep(/\S/).join(' ');
     }
 }
 
@@ -162,10 +162,11 @@ class Expression {
     has RegexAtom @.atoms;
 
     method is_exact_string_match() {
-        return
+        return (
             self.atoms.elems == 2
             and self.atoms[0] ~~ RegexLiteral
-            and self.atoms[1] ~~ RegexEndAnchor;
+            and self.atoms[1] ~~ RegexEndAnchor
+        )
     }
 
     method Str() {
