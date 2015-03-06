@@ -221,6 +221,7 @@ multi method convert_directive(
 my %variable_map = (
     '%{HTTP_USER_AGENT}' => '$http_user_agent',
     '%{HTTP_HOST}'       => '$host',
+    '%{QUERY_STRING}'    => '$query_string',
 );
 multi method convert_directive(
     @directives where {

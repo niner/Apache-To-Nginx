@@ -93,6 +93,18 @@ is($converter.convert('<VirtualHost *:80>
 ');
 is($converter.convert('<VirtualHost *:80>
     ServerName void.atikon.at
+    RewriteCond %{QUERY_STRING} id=32$
+    RewriteRule ^/index\.php /content/druckerei/service/faq_druckerei/index.html [R=301,L]
+</VirtualHost>'), 'server {
+        server_name void.atikon.at;
+        if ($query_string ~ "id=32$") {
+                rewrite "^/index\.php" /content/druckerei/service/faq_druckerei/index.html redirect;
+        }
+        include stanzas/standard_directives.conf;
+}
+');
+is($converter.convert('<VirtualHost *:80>
+    ServerName void.atikon.at
     RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
     RewriteRule ^(.*)/index.html(.*) $1/app_ger.html$2 [R]
 </VirtualHost>'), 'server {
