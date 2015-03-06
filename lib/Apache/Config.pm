@@ -98,6 +98,21 @@ class ProxyPassMatch is Directive {
     }
 }
 
+class ExpiresActive is Directive {
+    method Str() {
+        return 'ExpiresActive On';
+    }
+}
+
+class ExpiresByType is Directive {
+    has Str $.mime_type;
+    has Str $.string;
+
+    method Str() {
+        return "ExpiresByType $.mime_type $.string";
+    }
+}
+
 class DocumentRoot is Directive {
     has $.path;
 

@@ -105,6 +105,26 @@ is($converter.convert('<VirtualHost *:80>
 ');
 is($converter.convert('<VirtualHost *:80>
     ServerName void.atikon.at
+    ExpiresActive On
+    ExpiresByType image/gif "access plus 30 day"
+    ExpiresByType image/png "access plus 30 day"
+    ExpiresByType image/jpeg "access plus 30 day"
+    ExpiresByType image/x-icon "access plus 30 day"
+    ExpiresByType text/css "access plus 30 day"
+    ExpiresByType text/javascript "access plus 30 day"
+    ExpiresByType text/x-c "access plus 30 day"
+    ExpiresByType text/x-js "access plus 30 day"
+    ExpiresByType application/x-javascript "access plus 30 day"
+    ExpiresByType application/x-shockwave-flash "access plus 30 day"
+    Header append Cache-Control "public, must-revalidate"
+</VirtualHost>'), 'server {
+        server_name void.atikon.at;
+        include stanzas/caching.conf;
+        include stanzas/standard_directives.conf;
+}
+');
+is($converter.convert('<VirtualHost *:80>
+    ServerName void.atikon.at
     RewriteCond %{HTTP_USER_AGENT} AppWebView [NC]
     RewriteRule ^(.*)/index.html(.*) $1/app_ger.html$2 [R]
 </VirtualHost>'), 'server {

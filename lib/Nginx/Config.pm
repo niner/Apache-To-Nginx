@@ -61,6 +61,12 @@ class InAppRedirect {
     }
 }
 
+class CachingDirectives {
+    method Str {
+        return 'include stanzas/caching.conf;';
+    }
+}
+
 class StandardDirectives {
     method Str {
         return 'include stanzas/standard_directives.conf;';

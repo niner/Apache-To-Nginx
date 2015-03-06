@@ -27,6 +27,8 @@ rule directive {
     | <redirect_match> \n\s*
     | <proxy_pass> \n\s*
     | <proxy_pass_match> \n\s*
+    | <expires_active> \n\s*
+    | <expires_by_type> \n\s*
     | <unknown_directive> \n\s*
 }
 rule block {
@@ -61,6 +63,12 @@ rule proxy_pass {
 }
 rule proxy_pass_match {
     ProxyPassMatch <regex> <uri> <proxy_pass_option> *
+}
+rule expires_active {
+    ExpiresActive On
+}
+rule expires_by_type {
+    ExpiresByType <mime_type> <string>
 }
 rule unknown_directive {
     <name> (\N+)
@@ -98,6 +106,18 @@ token uri {
 }
 token http_status_code {
     \d+
+}
+token mime_type {
+    'image/gif'
+    | 'image/png'
+    | 'image/jpeg'
+    | 'image/x-icon'
+    | 'text/css'
+    | 'text/javascript'
+    | 'text/x-c'
+    | 'text/x-js'
+    | 'application/x-javascript'
+    | 'application/x-shockwave-flash'
 }
 token rewrite_options {
     '[' <rewrite_option> [','<rewrite_option>]* ']'

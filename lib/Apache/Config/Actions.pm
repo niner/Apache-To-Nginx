@@ -95,6 +95,17 @@ method proxy_pass_match($/) {
     );
 }
 
+method expires_active($/) {
+    make Apache::Config::ExpiresActive.new;
+}
+
+method expires_by_type($/) {
+    make Apache::Config::ExpiresByType.new(
+        mime_type => $<mime_type>.ast,
+        string    => $<string>.ast,
+    );
+}
+
 method unknown_directive($/) {
     make Apache::Config::UnknownDirective.new(
         name => $<name>.Str,
@@ -115,6 +126,14 @@ method uri($/) {
 }
 
 method value($/) {
+    make $/.Str;
+}
+
+method mime_type($/) {
+    make $/.Str;
+}
+
+method string($/) {
     make $/.Str;
 }
 

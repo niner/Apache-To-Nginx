@@ -239,6 +239,20 @@ multi method convert_directive(
     );
 }
 
+subset CachingHeader of Apache::Config::UnknownDirective
+    where {
+        .name eq 'Header'
+        and .data eq 'append Cache-Control "public, must-revalidate"'
+    };
+
+multi method convert_directive(
+    @directives where @directives[0] ~~ Apache::Config::ExpiresActive
+) {
+    @directives.shift
+        while @directives[0] ~~ Apache::Config::ExpiresActive|Apache::Config::ExpiresByType|CachingHeader;
+    return Nginx::Config::CachingDirectives.new;
+}
+
 subset ObsoleteDirective of Apache::Config::UnknownDirective
     where {
         .name ~~ /XSendFile/
