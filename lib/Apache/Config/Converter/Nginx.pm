@@ -8,6 +8,7 @@ my %variable_map = (
     '%{HTTP_USER_AGENT}' => '$http_user_agent',
     '%{HTTP_HOST}'       => '$host',
     '%{QUERY_STRING}'    => '$query_string',
+    '%{SERVER_NAME}'     => '$server_name',
 );
 sub replace_variables(Str $string is copy) {
     for %variable_map.kv -> $k, $v {
