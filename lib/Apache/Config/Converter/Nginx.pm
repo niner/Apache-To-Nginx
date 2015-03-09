@@ -232,17 +232,20 @@ multi method convert_directive(
 
 multi method convert_directive(
     @directives where {
-        @directives[0] ~~ Apache::Config::RewriteCond
+        not %*vhost<if_block>
+        and @directives[0] ~~ Apache::Config::RewriteCond
         and %variable_map{@directives[0].value.Str}:exists
     }
 ) {
     my $cond = @directives.shift;
     %*vhost<if_block> = True;
+    my @sub = self.convert_directive(@directives);
+    %*vhost<if_block> = False;
     return Nginx::Config::If.new(
         variable   => %variable_map{$cond.value.Str},
         op         => ($cond.regex.negated ?? '!' !! '') ~ ($cond.is_case_sensitive ?? '~' !! '~*'),
         value      => $cond.regex.Str,
-        directives => self.convert_directive(@directives),
+        directives => @sub,
     );
 }
 
