@@ -220,7 +220,10 @@ multi method convert_directive(
 }
 
 multi method convert_directive(
-    @directives where @directives[0] ~~ Apache::Config::RewriteRule
+    @directives where {
+        @directives[0] ~~ Apache::Config::RewriteRule
+        and @directives[0].replacement !~~ /\%\{REQUEST_URI\}/
+    }
 ) {
     my $rewrite = @directives.shift;
     return Nginx::Config::Rewrite.new(
