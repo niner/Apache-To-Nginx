@@ -29,7 +29,8 @@ class RewriteCond is Directive {
 
     method canonical_host() {
         return unless $.value eq '%{HTTP_HOST}';
-        return unless $.regex ~~ /^\!(.*)\$$/;
+        return unless $.regex.negated;
+        return unless $.regex ~~ /^(.*)\$$/;
         return $0.Str.subst(/\\/, '');
     }
 
@@ -174,6 +175,7 @@ class RegexEndAnchor is RegexAtom {
 }
 class Expression {
     has Bool $.begin_anchored = False;
+    has Bool $.negated = False;
     has RegexAtom @.atoms;
 
     method is_exact_string_match() {

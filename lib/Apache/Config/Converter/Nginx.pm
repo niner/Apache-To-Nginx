@@ -233,7 +233,7 @@ multi method convert_directive(
     %*vhost<if_block> = True;
     return Nginx::Config::If.new(
         variable   => %variable_map{$cond.value.Str},
-        op         => $cond.is_case_sensitive ?? '~' !! '~*',
+        op         => ($cond.regex.negated ?? '!' !! '') ~ ($cond.is_case_sensitive ?? '~' !! '~*'),
         value      => $cond.regex.Str,
         directives => self.convert_directive(@directives),
     );

@@ -130,8 +130,12 @@ token proxy_pass_option {
 }
 token regex {
     # ^/(?!error|icons|cgi-bin|htdig|statistik\$|news\$|facebook\$|twitter\$|impressum\$|net\$|(a|A)pp\$|(a|A)pp\$|sys_static|(a|A)pp\$)
+    <negator>?
     <begin_anchor>?
     <regex_atom>*
+}
+token negator {
+    '!'
 }
 token begin_anchor {
     '^'

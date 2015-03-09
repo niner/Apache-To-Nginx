@@ -139,8 +139,9 @@ method string($/) {
 
 method regex($/) {
     make Apache::Config::Expression.new(
+        negated        => $<negator> ?? True !! False,
         begin_anchored => $<begin_anchor> ?? True !! False,
-        atoms => $<regex_atom>».ast.grep(Apache::Config::RegexAtom),
+        atoms          => $<regex_atom>».ast.grep(Apache::Config::RegexAtom),
     );
 }
 
