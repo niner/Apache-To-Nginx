@@ -98,7 +98,7 @@ class Return {
     has $.value;
 
     method Str {
-        return "return $.value;";
+        return $.value ~~ /^http/ ?? "return $.value;" !! "return \$scheme://\$host$.value;";
     }
 }
 

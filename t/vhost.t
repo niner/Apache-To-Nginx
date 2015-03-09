@@ -105,6 +105,20 @@ is($converter.convert('<VirtualHost *:80>
 ');
 is($converter.convert('<VirtualHost *:80>
     ServerName void.atikon.at
+    RewriteCond %{HTTP_HOST} !^www\. [NC]
+    RewriteCond %{HTTP_HOST} ^(.*)\.anifit\.(com|de|at)$
+    RewriteRule ^(.*)/shop/(.*) https://%1.provital.com$1/shop/$2 [R,L]
+</VirtualHost>'), 'server {
+        server_name void.atikon.at;
+        if ($host !~* "^www\.") {
+                #RewriteCond %{HTTP_HOST} ^(.*)\.anifit\.(com|de|at)$
+        }
+        rewrite "^(.*)/shop/(.*)" https://%1.provital.com$1/shop/$2 redirect;
+        include stanzas/standard_directives.conf;
+}
+');
+is($converter.convert('<VirtualHost *:80>
+    ServerName void.atikon.at
     ExpiresActive On
     ExpiresByType image/gif "access plus 30 day"
     ExpiresByType image/png "access plus 30 day"
