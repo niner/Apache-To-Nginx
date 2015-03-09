@@ -4,6 +4,18 @@ use Apache::Config::Parser;
 use Apache::Config::Actions;
 use Nginx::Config;
 
+my %variable_map = (
+    '%{HTTP_USER_AGENT}' => '$http_user_agent',
+    '%{HTTP_HOST}'       => '$host',
+    '%{QUERY_STRING}'    => '$query_string',
+);
+sub replace_variables(Str $string is copy) {
+    for %variable_map.kv -> $k, $v {
+        $string.=subst($k, $v);
+    }
+    return $string;
+}
+
 # RewriteCond %{HTTP_HOST} !www\.kollegger.co.at$
 # RewriteRule ^(.*)$ http://www.kollegger.co.at$1 [R=301,L]
 
@@ -137,7 +149,7 @@ multi method convert_directive(
     return Nginx::Config::Location.new(
         path       => $redirect.path,
         directives => Nginx::Config::Return.new(
-            value => $redirect.uri,
+            value => replace_variables($redirect.uri),
         ),
     )
 }
@@ -166,7 +178,7 @@ multi method convert_directive(
             ?? $redirect.regex.atoms[0].Str
             !! $redirect.regex.Str,
         directives => Nginx::Config::Return.new(
-            value => $redirect.uri,
+            value => replace_variables($redirect.uri),
         ),
     );
 }
@@ -187,7 +199,7 @@ multi method convert_directive(
         op         => '=',
         path       => $redirect.regex.atoms[0].Str,
         directives => Nginx::Config::Return.new(
-            value => $redirect.replacement,
+            value => replace_variables($redirect.replacement),
         ),
     );
 }
@@ -202,7 +214,7 @@ multi method convert_directive(
         op         => '~',
         path       => $redirect.regex.Str,
         directives => Nginx::Config::Return.new(
-            value => $redirect.replacement,
+            value => replace_variables($redirect.replacement),
         ),
     );
 }
@@ -213,16 +225,11 @@ multi method convert_directive(
     my $rewrite = @directives.shift;
     return Nginx::Config::Rewrite.new(
         regex       => $rewrite.regex.Str,
-        replacement => $rewrite.replacement,
+        replacement => replace_variables($rewrite.replacement),
         redirect    => $rewrite.is_redirect,
     );
 }
 
-my %variable_map = (
-    '%{HTTP_USER_AGENT}' => '$http_user_agent',
-    '%{HTTP_HOST}'       => '$host',
-    '%{QUERY_STRING}'    => '$query_string',
-);
 multi method convert_directive(
     @directives where {
         @directives[0] ~~ Apache::Config::RewriteCond
