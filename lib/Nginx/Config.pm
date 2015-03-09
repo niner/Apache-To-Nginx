@@ -88,7 +88,7 @@ class Location {
 
     method Str {
         return
-            "location $.op $.path \{\n"
+            qq[location $.op "$.path" \{\n]
             ~ (@.directives ?? @.directives».Str.join("\n").indent(8) ~ "\n" !! '')
             ~ '}';
     }

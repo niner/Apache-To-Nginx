@@ -41,8 +41,8 @@ is($converter.convert('<VirtualHost *:80>
     RewriteRule ^/foo/bar$ /content/foo/bar [R=301,L]
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
-        location = /foo/bar {
-                return /content/foo/bar;
+        location = "/foo/bar" {
+                return $scheme://$host/content/foo/bar;
         }
         include stanzas/standard_directives.conf;
 }
@@ -52,8 +52,8 @@ is($converter.convert('<VirtualHost *:80>
     RewriteRule ^/global/site/leist_steuerberatung.html /content/steuerberater_wirtschaftspruefer/leistungen/steuerberater_rosenheim/index.html [R=301,L]
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
-        location ~ ^/global/site/leist_steuerberatung.html {
-                return /content/steuerberater_wirtschaftspruefer/leistungen/steuerberater_rosenheim/index.html;
+        location ~ "^/global/site/leist_steuerberatung.html" {
+                return $scheme://$host/content/steuerberater_wirtschaftspruefer/leistungen/steuerberater_rosenheim/index.html;
         }
         include stanzas/standard_directives.conf;
 }
@@ -166,7 +166,7 @@ is($converter.convert('<VirtualHost *:80>
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
         include stanzas/cms.conf;
-        location ~ ^/(news$) {
+        location ~ "^/(news$)" {
         }
         include stanzas/standard_directives.conf;
 }
@@ -248,37 +248,37 @@ is($converter.convert('<VirtualHost *:80>
 server {
         server_name www.haubner-stb.de;
         root /srv/www/htdocs/kunden/haubner-stb.de;
-        location = /facebook {
+        location = "/facebook" {
                 return https://www.facebook.com/pages/Haubner-Schäfer-Partner/190673467622036;
         }
-        location = /twitter {
+        location = "/twitter" {
                 return https://twitter.com/haubner_stb;
         }
-        location = /impressum {
-                return /content/inhalte/kanzlei/impressum/index_ger.html;
+        location = "/impressum" {
+                return $scheme://$host/content/inhalte/kanzlei/impressum/index_ger.html;
         }
-        location = /net {
-                return /content/inhalte/kanzlei/kanzlei_im_netz/index_ger.html;
+        location = "/net" {
+                return $scheme://$host/content/inhalte/kanzlei/kanzlei_im_netz/index_ger.html;
         }
-        location ~ /(a|A)pp$ {
-                return /content/inhalte/kanzlei/kanzlei_app/index_ger.html;
+        location ~ "/(a|A)pp$" {
+                return $scheme://$host/content/inhalte/kanzlei/kanzlei_app/index_ger.html;
         }
-        location  /facebook {
+        location  "/facebook" {
         }
-        location  /news {
+        location  "/news" {
         }
-        location  /twitter {
+        location  "/twitter" {
         }
-        location  /impressum {
+        location  "/impressum" {
         }
-        location  /net {
+        location  "/net" {
         }
-        location  /app {
+        location  "/app" {
         }
-        location  /App {
+        location  "/App" {
         }
         include stanzas/cms.conf;
-        location ~ ^/(news$|facebook$|twitter$|impressum$|net$|(a|A)pp$|(a|A)pp$|(a|A)pp$) {
+        location ~ "^/(news$|facebook$|twitter$|impressum$|net$|(a|A)pp$|(a|A)pp$|(a|A)pp$)" {
         }
         include stanzas/app_web_view_redirect.conf;
         include stanzas/mobile_redirect.conf;
