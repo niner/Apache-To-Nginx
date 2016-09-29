@@ -110,10 +110,16 @@ is($converter.convert('<VirtualHost *:80>
     RewriteRule ^(.*)/shop/(.*) https://%1.provital.com$1/shop/$2 [R,L]
 </VirtualHost>'), 'server {
         server_name void.atikon.at;
+        set $if_cond_1 1;
         if ($host !~* "^www\.") {
-                #RewriteCond %{HTTP_HOST} ^(.*)\.anifit\.(com|de|at)$
+                set $if_cond_1 "${if_cond_1}1";
         }
-        rewrite "^(.*)/shop/(.*)" https://%1.provital.com$1/shop/$2 redirect;
+        if ($host ~ "^(.*)\.anifit\.(com|de|at)$") {
+                set $if_cond_1 "${if_cond_1}1";
+        }
+        if ($if_cond_1  "111") {
+                rewrite "^(.*)/shop/(.*)" https://%1.provital.com$1/shop/$2 redirect;
+        }
         include stanzas/standard_directives.conf;
 }
 ');

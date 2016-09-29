@@ -242,15 +242,42 @@ multi method convert_directive(
     }
 ) {
     my $cond = @directives.shift;
-    %*vhost<if_block> = True;
-    my @sub = self.convert_directive(@directives);
-    %*vhost<if_block> = False;
-    return Nginx::Config::If.new(
+    my $if = Nginx::Config::If.new(
         variable   => %variable_map{$cond.value.Str},
         op         => ($cond.regex.negated ?? '!' !! '') ~ ($cond.is_case_sensitive ?? '~' !! '~*'),
         value      => $cond.regex.Str,
-        directives => @sub,
     );
+    my @sub = {
+        temp %*vhost<if_block> = $if;
+        my @sub = self.convert_directive(@directives);
+        $if = %*vhost<if_block>; # might have been replaced by a NestedIf
+        @sub
+    }();
+    $if.directives.prepend(@sub);
+    return $if;
+}
+
+multi method convert_directive(
+    @directives where {
+        %*vhost<if_block> # nested if - concatenate conditions
+        and @directives[0] ~~ Apache::Config::RewriteCond
+        and %variable_map{@directives[0].value.Str}:exists
+    }
+) {
+    my $cond = @directives.shift;
+    my $parent = %*vhost<if_block>;
+    unless $parent.isa(Nginx::Config::NestedIf) {
+        my $if = $parent;
+        %*vhost<if_block> = $parent = Nginx::Config::NestedIf.new(:index(++%*vhost<nested_ifs>));
+        $parent.add-if($if);
+    }
+    $parent.add-if(Nginx::Config::If.new(
+        variable   => %variable_map{$cond.value.Str},
+        op         => ($cond.regex.negated ?? '!' !! '') ~ ($cond.is_case_sensitive ?? '~' !! '~*'),
+        value      => $cond.regex.Str,
+    ));
+    $parent.directives.append(self.convert_directive(@directives));
+    return Empty; # everything's contained in the NestedIf already
 }
 
 subset CachingHeader of Apache::Config::UnknownDirective

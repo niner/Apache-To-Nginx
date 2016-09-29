@@ -128,4 +128,30 @@ class If {
     }
 }
 
+class NestedIf {
+    has $.index = 0;
+    has @.conditions;
+    has @.directives;
+
+    method add-if(If $if) {
+        @.conditions.push: $if;
+        @.directives.append: $if.directives.splice(
+            0,
+            *,
+            qq/set \$if_cond_$.index "\$\{if_cond_$.index\}1";/,
+        );
+    }
+
+    method Str() {
+        return qq/set \$if_cond_$.index 1;\n/
+            ~ @.conditions.map(*.Str).join("\n") ~ "\n"
+            ~ If.new(
+                :variable("\$if_cond_$.index"),
+                :op(""),
+                :value('1' x (@.conditions.elems + 1)),
+                :@!directives,
+            ).Str;
+    }
+}
+
 # vim: ft=perl6
