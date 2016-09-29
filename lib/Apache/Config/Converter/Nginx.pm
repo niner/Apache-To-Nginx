@@ -306,7 +306,7 @@ method convert(Str $config) {
         my @directives = $cms.directives;
         my %*vhost;
         while @directives {
-            push @nginx_directives, self.convert_directive(@directives);
+            @nginx_directives.append: self.convert_directive(@directives);
         }
         push @nginx_directives, Nginx::Config::StandardDirectives.new;
 
