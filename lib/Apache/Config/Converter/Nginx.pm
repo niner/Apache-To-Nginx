@@ -124,7 +124,7 @@ multi method convert_directive(
 ) {
     my $directive = @directives.shift;
     my $alternatives = $directive.regex.atoms[1].atoms[0].alternatives;
-    for <error icons cgi-bin htdig statistik statistik$ statistik\$ sys_static>, 'statistik $' -> $obsolete {
+    for |<error icons cgi-bin htdig statistik statistik$ statistik\$ sys_static>, 'statistik $' -> $obsolete {
         my $i = $alternatives.first({$_.Str eq $obsolete}, :k);
         $alternatives.splice($i, 1) if defined $i;
     }
