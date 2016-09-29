@@ -324,7 +324,7 @@ method convert(Str $config) {
         }
         else {
             $nginx_config ~= Nginx::Config::Server.new(
-                names      => [$cms.name, $cms.aliases.list],
+                names      => [$cms.name, |$cms.aliases],
                 directives => @nginx_directives,
             ).Str;
         }
