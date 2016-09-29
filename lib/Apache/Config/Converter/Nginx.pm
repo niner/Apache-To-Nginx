@@ -32,7 +32,7 @@ multi method convert_directive(
     %*vhost<canonical_host> = @directives[0].canonical_host;
     shift @directives;
     shift @directives;
-    return;
+    return Empty;
 }
 
 # DocumentRoot /srv/www/htdocs/void.atikon.at
@@ -59,7 +59,7 @@ multi method convert_directive(
     @directives where @directives[0] ~~ MobileCondition
 ) {
     Nil until @directives.shift ~~ Apache::Config::RewriteRule;
-    return if %*vhost<mobile_redirect>;
+    return Empty if %*vhost<mobile_redirect>;
     %*vhost<mobile_redirect> = True;
     return Nginx::Config::MobileRedirect.new;
 }
@@ -74,7 +74,7 @@ multi method convert_directive(
     @directives where @directives[0] ~~ AppWebViewCondition
 ) {
     Nil until @directives.shift ~~ Apache::Config::RewriteRule;
-    return if %*vhost<app_web_view>;
+    return Empty if %*vhost<app_web_view>;
     %*vhost<app_web_view> = True;
     return Nginx::Config::AppWebViewRedirect.new;
 }
@@ -100,7 +100,7 @@ multi method convert_directive(
     my $error_page = @directives.shift;
 
     # handeled by standard_directives.conf:
-    return if $error_page.status == 404 and $error_page.uri eq '/404.html';
+    return Empty if $error_page.status == 404 and $error_page.uri eq '/404.html';
 
     return Nginx::Config::ErrorPage.new(
         status => $error_page.status,
@@ -140,7 +140,7 @@ multi method convert_directive(
     @directives where @directives[0] ~~ CMSProxyStatic
 ) {
     @directives.shift;
-    return;
+    return Empty;
 }
 
 multi method convert_directive(
@@ -165,14 +165,14 @@ multi method convert_directive(
     )
 ) {
     @directives.shift;
-    return; # handled by standard_directives.conf
+    return Empty; # handled by standard_directives.conf
 }
 
 multi method convert_directive(
     @directives where @directives[0] ~~ Apache::Config::RedirectMatch
 ) {
     my $redirect = @directives.shift;
-    return if $redirect.regex.atoms[0].Str eq '/statistik'; # already handled by include
+    return Empty if $redirect.regex.atoms[0].Str eq '/statistik'; # already handled by include
     return Nginx::Config::Location.new(
         op         => $redirect.regex.is_exact_string_match ?? '=' !! '~',
         path       => $redirect.regex.is_exact_string_match
@@ -281,7 +281,7 @@ multi method convert_directive(
     @directives where @directives[0] ~~ ObsoleteDirective
 ) {
     @directives.shift;
-    return;
+    return Empty;
 }
 
 multi method convert_directive(
