@@ -19,7 +19,7 @@ method TOP($/) {
 method virtual_host($/) {
     make Apache::Config::VirtualHost.new(
         name => get_directive($<directive>, 'server_name'),
-        aliases => [ get_directives($<directive>, 'server_alias').list ],
+        aliases => [ get_directives($<directive>, 'server_alias').map(*.Slip) ],
         directives => $<directive>».ast.grep({ $_ ~~ Apache::Config::Directive }),
     );
 }
