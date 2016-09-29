@@ -5,10 +5,15 @@ use Apache::Config::Actions;
 use Nginx::Config;
 
 my %variable_map = (
-    '%{HTTP_USER_AGENT}' => '$http_user_agent',
-    '%{HTTP_HOST}'       => '$host',
-    '%{QUERY_STRING}'    => '$query_string',
-    '%{SERVER_NAME}'     => '$server_name',
+    '%{HTTP_USER_AGENT}'        => '$http_user_agent',
+    '%{HTTP_HOST}'              => '$host',
+    '%{QUERY_STRING}'           => '$query_string',
+    '%{SERVER_NAME}'            => '$server_name',
+    '%{REQUEST_URI}'            => '$request_uri',
+    '%{HTTP:Accept-Language}'   => '$http_accept_language',
+    '%{HTTP_COOKIE}'            => '$http_cookie',
+    '%{ENV:GEOIP_COUNTRY_NAME}' => '$geoip_country_name',
+    '%{REMOTE_ADDR}'            => '$remote_addr',
 );
 sub replace_variables(Str $string is copy) {
     for %variable_map.kv -> $k, $v {
