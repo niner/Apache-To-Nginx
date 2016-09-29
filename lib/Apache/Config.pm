@@ -1,4 +1,4 @@
-class Apache::Config;
+unit class Apache::Config;
 
 has $.virtual_hosts;
 

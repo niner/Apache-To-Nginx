@@ -1,4 +1,4 @@
-class Nginx::Config;
+unit class Nginx::Config;
 
 class Server {
     has @.names;

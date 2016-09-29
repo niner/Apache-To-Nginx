@@ -1,5 +1,5 @@
 #use Grammar::Debugger;
-grammar Apache::Config::Parser;
+unit grammar Apache::Config::Parser;
 
 token ws { <!ww> \h* }
 rule TOP {

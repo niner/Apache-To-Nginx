@@ -1,4 +1,4 @@
-class Apache::Config::Actions;
+unit class Apache::Config::Actions;
 
 use Apache::Config;
 

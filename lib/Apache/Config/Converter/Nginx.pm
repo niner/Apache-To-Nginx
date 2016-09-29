@@ -1,4 +1,4 @@
-class Apache::Config::Converter::Nginx;
+unit class Apache::Config::Converter::Nginx;
 
 use Apache::Config::Parser;
 use Apache::Config::Actions;
