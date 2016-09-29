@@ -300,6 +300,6 @@ server {
 }
 ');
 
-done;
+done-testing;
 
 # vim: ft=perl6
