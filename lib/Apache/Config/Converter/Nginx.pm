@@ -307,6 +307,9 @@ subset ObsoleteDirective of Apache::Config::UnknownDirective
         or .name eq 'Alias' and .data ~~ /static/
         or .name eq 'ProxyPassReverse'
         or .name eq 'ProxyPreserveHost'
+        or .name eq 'ProxyVia'
+        or .name eq 'SetEnv' and .data ~~ /proxy\-initial\-not\-pooled/
+        or .name ~~ m:i/ModPageSpeed/
     };
 
 multi method convert_directive(
