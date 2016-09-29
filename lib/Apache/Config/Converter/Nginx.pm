@@ -58,7 +58,7 @@ subset MobileCondition of Apache::Config::RewriteCond
 multi method convert_directive(
     @directives where @directives[0] ~~ MobileCondition
 ) {
-    True until @directives.shift ~~ Apache::Config::RewriteRule;
+    Nil until @directives.shift ~~ Apache::Config::RewriteRule;
     return if %*vhost<mobile_redirect>;
     %*vhost<mobile_redirect> = True;
     return Nginx::Config::MobileRedirect.new;
@@ -73,7 +73,7 @@ subset AppWebViewCondition of Apache::Config::RewriteCond
 multi method convert_directive(
     @directives where @directives[0] ~~ AppWebViewCondition
 ) {
-    True until @directives.shift ~~ Apache::Config::RewriteRule;
+    Nil until @directives.shift ~~ Apache::Config::RewriteRule;
     return if %*vhost<app_web_view>;
     %*vhost<app_web_view> = True;
     return Nginx::Config::AppWebViewRedirect.new;
@@ -90,7 +90,7 @@ subset InAppCondition of Apache::Config::RewriteCond
 multi method convert_directive(
     @directives where @directives[0] ~~ InAppCondition
 ) {
-    True until @directives.shift ~~ Apache::Config::RewriteRule;
+    Nil until @directives.shift ~~ Apache::Config::RewriteRule;
     return Nginx::Config::InAppRedirect.new;
 }
 
