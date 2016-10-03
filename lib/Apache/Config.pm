@@ -144,7 +144,9 @@ class VirtualHost {
     }
 
     method Str() {
-        return "<VirtualHost *:80>\n" ~ @.directives».Str.join("\n").indent(8) ~ "\n</VirtualHost>";
+        return "<VirtualHost *:80>\n"
+            ~ ("ServerName $.name", "ServerAlias @.aliases[*]", |@.directives)».Str.join("\n").indent(8)
+            ~ "\n</VirtualHost>";
     }
 }
 
