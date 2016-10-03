@@ -28,6 +28,10 @@ method directive($/) {
     make $/.values[0].ast;
 }
 
+method comment($/) {
+    make Apache::Config::Comment.new(:content($/.Str));
+}
+
 method server_name($/) {
     make $<domain>.Str;
 }

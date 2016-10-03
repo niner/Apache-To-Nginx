@@ -13,6 +13,14 @@ class Domain {
 class Directive {
 }
 
+class Comment is Directive {
+    has $.content;
+
+    method Str() {
+        return $.content;
+    }
+}
+
 class ErrorDocument is Directive {
     has $.status;
     has $.uri;
