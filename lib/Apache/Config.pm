@@ -71,7 +71,7 @@ class RedirectMatch is Directive {
     has $.uri;
 
     method Str() {
-        return "RedirectMatch { $.regex.perl } $.uri";
+        return "RedirectMatch { $.regex.Str } $.uri";
     }
 }
 
