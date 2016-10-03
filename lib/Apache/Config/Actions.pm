@@ -95,6 +95,10 @@ method proxy_pass_match($/) {
     );
 }
 
+method proxy_pass_option($/) {
+    make $/.Str;
+}
+
 method expires_active($/) {
     make Apache::Config::ExpiresActive.new;
 }
