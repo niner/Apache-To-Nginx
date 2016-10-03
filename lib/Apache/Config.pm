@@ -187,7 +187,7 @@ class Expression {
     }
 
     method Str() {
-        return ($.begin_anchored ?? '^' !! '') ~ @.atoms».Str.join('');
+        return ($.negated ?? '!' !! '') ~ ($.begin_anchored ?? '^' !! '') ~ @.atoms».Str.join('');
     }
 }
 
