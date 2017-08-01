@@ -38,7 +38,7 @@ class RewriteCond is Directive {
     method canonical_host() {
         return unless $.value eq '%{HTTP_HOST}';
         return unless $.regex.negated;
-        return unless $.regex ~~ /^(.*)\$$/;
+        return unless $.regex.as-regex-string ~~ /^(.*)\$$/;
         return $0.Str.subst(/\\/, '');
     }
 
@@ -196,8 +196,12 @@ class Expression {
         )
     }
 
+    method as-regex-string() {
+        return ($.begin_anchored ?? '^' !! '') ~ @.atoms».Str.join('');
+    }
+
     method Str() {
-        return ($.negated ?? '!' !! '') ~ ($.begin_anchored ?? '^' !! '') ~ @.atoms».Str.join('');
+        return ($.negated ?? '!' !! '') ~ $.as-regex-string;
     }
 }
 

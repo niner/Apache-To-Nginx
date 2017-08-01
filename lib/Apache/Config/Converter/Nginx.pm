@@ -26,7 +26,7 @@ sub replace_variables(Str $string is copy) {
 # RewriteRule ^(.*)$ http://www.kollegger.co.at$1 [R=301,L]
 
 subset CanonicalHostCondition of Apache::Config::RewriteCond where *.canonical_host;
-subset CanonicalHostRewrite of Apache::Config::RewriteRule where *.regex.Str eq '^(.*)$';
+subset CanonicalHostRewrite of Apache::Config::RewriteRule where *.regex.as-regex-string eq '^(.*)$';
 
 multi method convert_directive(
     @directives where (
@@ -250,7 +250,7 @@ multi method convert_directive(
     my $if = Nginx::Config::If.new(
         variable   => %variable_map{$cond.value.Str},
         op         => ($cond.regex.negated ?? '!' !! '') ~ ($cond.is_case_sensitive ?? '~' !! '~*'),
-        value      => $cond.regex.Str,
+        value      => $cond.regex.as-regex-string,
     );
     my @sub = {
         temp %*vhost<if_block> = $if;
@@ -279,7 +279,7 @@ multi method convert_directive(
     $parent.add-if(Nginx::Config::If.new(
         variable   => %variable_map{$cond.value.Str},
         op         => ($cond.regex.negated ?? '!' !! '') ~ ($cond.is_case_sensitive ?? '~' !! '~*'),
-        value      => $cond.regex.Str,
+        value      => $cond.regex.as-regex-string,
     ));
     $parent.directives.append(self.convert_directive(@directives));
     return Empty; # everything's contained in the NestedIf already
