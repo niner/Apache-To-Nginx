@@ -29,7 +29,7 @@ method directive($/) {
 }
 
 method comment($/) {
-    make Apache::Config::Comment.new(:content($/.Str));
+    make Apache::Config::Comment.new(:content($0));
 }
 
 method server_name($/) {

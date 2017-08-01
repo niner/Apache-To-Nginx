@@ -73,6 +73,14 @@ class StandardDirectives {
     }
 }
 
+class Comment {
+    has $.content;
+
+    method Str {
+        return '#' ~ $.content;
+    }
+}
+
 class Generic {
     has $.content;
 

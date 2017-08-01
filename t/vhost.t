@@ -300,7 +300,9 @@ server {
         include stanzas/cms.conf;
         location ~ "^/(news$|facebook$|twitter$|impressum$|net$|(a|A)pp$|(a|A)pp$|(a|A)pp$)" {
         }
+        #Redirect on App
         include stanzas/app_web_view_redirect.conf;
+        #Redirect on mobile Browser
         include stanzas/mobile_redirect.conf;
         include stanzas/standard_directives.conf;
 }

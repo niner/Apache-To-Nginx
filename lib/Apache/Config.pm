@@ -17,7 +17,7 @@ class Comment is Directive {
     has $.content;
 
     method Str() {
-        return $.content;
+        return '#' ~ $.content;
     }
 }
 

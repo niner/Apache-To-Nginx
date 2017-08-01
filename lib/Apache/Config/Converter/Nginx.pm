@@ -22,6 +22,12 @@ sub replace_variables(Str $string is copy) {
     return $string;
 }
 
+multi method convert_directive(
+    @directives where @directives[0] ~~ Apache::Config::Comment
+) {
+    return Nginx::Config::Comment.new(content => @directives.shift.content);
+}
+
 # RewriteCond %{HTTP_HOST} !www\.kollegger.co.at$
 # RewriteRule ^(.*)$ http://www.kollegger.co.at$1 [R=301,L]
 

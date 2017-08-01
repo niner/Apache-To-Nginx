@@ -79,7 +79,7 @@ rule unknown_block {
     '</' $0 '>' \s*
 }
 token comment {
-    \s* '#' \N*
+    \s* '#' (\N*)
 }
 token name {
     \w+
