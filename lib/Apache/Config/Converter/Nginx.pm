@@ -128,7 +128,8 @@ multi method convert_directive(
     return Nginx::Config::Location.new(path => @directives.shift.path);
 }
 
-subset CMSProxy of Apache::Config::ProxyPassMatch where *.uri eq 'http://0:8084/';
+subset CMSProxy of Apache::Config::ProxyPassMatch
+    where {.uri ~~ m!'http://' [0 || 'cms-public.atikon.io' || '10.0.0.15'] ':8084/'!};
 
 multi method convert_directive(
     @directives where @directives[0] ~~ CMSProxy
